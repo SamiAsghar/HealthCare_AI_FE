@@ -2,16 +2,15 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { uploadAudio as uploadAudioAPI } from "./api/uploadAudio";
 import { playTranslation as playTranslationAPI } from "./api/playTranslation";
-
 // Dynamically import ReactMic to prevent SSR issues
-const ReactMic = dynamic(
-  () => import("react-mic").then((mod) => mod.ReactMic),
+const ReactMediaRecorder = dynamic(
+  () => import("react-media-recorder").then((mod) => mod.ReactMediaRecorder),
   { ssr: false }
 );
 
 export default function Home() {
   const [recording, setRecording] = useState(false);
-  const [audioBlob, setAudioBlob] = useState<{ blob: Blob } | null>(null);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [transcription, setTranscription] = useState("");
   const [translation, setTranslation] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("English");
@@ -24,8 +23,8 @@ export default function Home() {
     setRecording(false);
   };
 
-  const onStop = (recordedBlob: any) => {
-    setAudioBlob(recordedBlob);
+  const onStop = (blobUrl:string, blob:Blob) => {
+    setAudioBlob(blob);
   };
 
   const uploadAudio = async () => {
@@ -69,49 +68,57 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center p-8 space-y-6">
       <h1 className="text-2xl font-bold">Record Your Audio</h1>
-      <ReactMic
-        record={recording}
-        className="sound-wave"
+
+      <ReactMediaRecorder
+        audio
         onStop={onStop}
-        strokeColor="#000000"
-        backgroundColor="#FF5733"
-        mimeType="audio/webm"
+        render={({ startRecording, stopRecording, mediaBlobUrl }) => (
+          <>
+            <audio src={mediaBlobUrl} controls className="w-full mt-4" />
+            <div className="flex space-x-4">
+              <button
+                onClick={() => {
+                  setRecording(true);
+                  startRecording();
+                }}
+                disabled={recording}
+                className={`px-4 py-2 text-white rounded ${
+                  recording
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-500 hover:bg-blue-600"
+                }`}
+              >
+                Start Recording
+              </button>
+              <button
+                onClick={() => {
+                  setRecording(false);
+                  stopRecording();
+                }}
+                disabled={!recording}
+                className={`px-4 py-2 text-white rounded ${
+                  !recording
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-red-500 hover:bg-red-600"
+                }`}
+              >
+                Stop Recording
+              </button>
+              <button
+                onClick={uploadAudio}
+                disabled={!audioBlob}
+                className={`px-4 py-2 text-white rounded ${
+                  !audioBlob
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-500 hover:bg-green-600"
+                }`}
+              >
+                Upload Audio
+              </button>
+            </div>
+          </>
+        )}
       />
-      <div className="flex space-x-4">
-        <button
-          onClick={startRecording}
-          disabled={recording}
-          className={`px-4 py-2 text-white rounded ${
-            recording
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          }`}
-        >
-          Start Recording
-        </button>
-        <button
-          onClick={stopRecording}
-          disabled={!recording}
-          className={`px-4 py-2 text-white rounded ${
-            !recording
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-red-500 hover:bg-red-600"
-          }`}
-        >
-          Stop Recording
-        </button>
-        <button
-          onClick={uploadAudio}
-          disabled={!audioBlob}
-          className={`px-4 py-2 text-white rounded ${
-            !audioBlob
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-green-500 hover:bg-green-600"
-          }`}
-        >
-          Upload Audio
-        </button>
-      </div>
 
       <div className="w-full max-w-2xl space-y-4 mt-6">
         <div>
