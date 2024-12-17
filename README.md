@@ -1,40 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
-## Getting Started
+---
 
-First, run the development server:
+# **HealthCare AI: Medical Translation and Transcription App**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This project is a full-stack web application that allows users to record speech, transcribe it, translate it into a target language, and then play the translation as audio. The application consists of a **frontend** (NextJS, TailwindCSS) and a **backend** (NestJS (Node)). The backend is responsible for handling audio processing, transcription, translation, and text-to-speech (TTS).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## **Table of Contents**
+1. [Code Documentation](#code-documentation)
+   - [Frontend Structure](#frontend-structure)
+   - [Security Considerations](#security-considerations)
+2. [User Guide](#user-guide)
+   - [Features](#features)
+   - [Running the Application](#running-the-application)
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+---
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## **Code Documentation**
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+### **Frontend Structure**
+The frontend handles user interactions, such as starting and stopping the recording, displaying transcriptions and translations, and playing the audio translation.
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **index.tsx**: Contains the structure of the webpage, including input fields for transcriptions, translations, and buttons for interaction (Record, Stop, Speak).
+- **Serverless Functions (playTranslation.ts, uploadAudio.ts)**: Contains code for getting data from FE and request to BE for processing.
 
-## Learn More
+### **Security Considerations**
+- **Audio File Handling**: Securely handle the audio files processed by the backend to avoid memory issues or security vulnerabilities.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+## **User Guide**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### **Features**
+- **Recording Audio**: Users can record their voice by clicking the "Start Recording" button and end it by clicking the "Stop Recording" Button. The audio is captured using the browser’s built-in microphone access.
+- **Transcription**: User can submit audio for transcription using "Upload Audio" button. App sends the audio to the backend, where it is transcribed using OpenAI’s Whisper model.
+- **Translation**: The transcribed text is then translated into the selected target language using OpenAI models.
+- **Speak Translation**: The translated text can be converted into speech and played back to the user through the "Speak" button.
 
-## Deploy on Vercel
+### **Running the Application**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### **Set Up the Frontend**
+1. Clone the repo
+2. To install the dependencies, run: 
+   ```bash
+   npm run install
+   ```
+3. To start the fronten app, run:
+   ```bash
+   npm run dev
+   ```
+4. The Frontend app will run on `http://127.0.0.1:3000`, and you’ll be able to interact with the frontend from this address.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+#### **Test the App**
+1. Click **Start Recording** to record your voice.
+2. After stopping the recording, the transcription and translation will appear in their respective sections.
+3. Click **Speak** to play the translated text as audio.
+
+### **Interacting with the App**
+- **Record**: Click the "Start Recording" button to begin recording audio. When you are done, click "Stop Recording".
+- **Transcription and Translation**: After the recording stops, the transcribed text is displayed, followed by the translated text.
+- **Speak**: After the translation is displayed, click the "Speak" button to hear the translation in audio form.
